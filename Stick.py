@@ -1,4 +1,11 @@
 import numpy as np
+from enum import Enum
+
+class StickGameType(Enum):
+
+  HumanVsHuman = 1
+  HumanVsBot = 2
+  BotVsBot = 3
 
 class StickPlayer:
   def __init__(self, id=0) -> None:
@@ -82,8 +89,6 @@ class StickPlayer:
       print(f'  "{action}" is not valid, Bro! Try these:')
       print(f'  {list(self.validActions.keys())}')
       self.play()
-
-
 
 class StickGameBoard:
   def __init__(self) -> None: 

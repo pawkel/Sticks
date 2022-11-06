@@ -3,9 +3,11 @@ from helpers import (swapHands,fingerTouch,combineActions,decompose)
 import numpy as np
 import pdb 
 class StickBot:
-  def __init__(self, botName='Bob'):
+  def __init__(self, botName='Bob', botType=0):
     self.opponent = None
     self.playerID = botName
+    self.playerGameID = None
+    self.botType = botType
     self.vals = {'l':1,'r':1}
 
   def nextStates(self, state):
@@ -27,33 +29,56 @@ class StickBot:
       states.remove([])
     return states
 
-  def oneStepAhead(self, states):
+  def oneStepAhead_dump(self, states):
+    ''' A bot tries to lose as fast as it can? dump...
+    '''
     favStates = []
+    stateScores = []
     for s in states:
-      l1, r1, l2,r2 = s
-      states2 = self.nextStates((l2,r2, l1,r1)) ## states that s leads to...
-      flag = 1
+      # l1, r1, l2,r2 = s
+      states2 = self.nextStates(s) ## states that s leads to...
+      stateScore = 0
       for s2 in states2:
-        if s2[2]==s2[3]==0:
-          flag = 0
-          break ## if this state leads to a lost, remove it
-      if flag==1:
-        favStates.append(s)
-    try:
-      idx = np.random.choice(range(len(favStates)),1)[0]
-    except:
-      print(f'Good game! {self.playerID} resigned!')
-      return states[np.random.choice(range(len(states)),1)[0]]
+        if s2[2]==0 or s2[3]==0: ## state 2 and 3 are for opponent's left and right hand
+          stateScore += 1
+          # break ## if this state leads to a lost, remove it
+        elif s2[0]==0 or s2[1]==0: ## state 0 and 1 are for this bot' left and right hand
+          stateScore -= 1 ## we just select this winning state!
+      # if flag==1:
+      #   favStates.append(s)
+      stateScores.append(stateScore)
+    # try:
+    #   idx = np.random.choice(range(len(favStates)),1)[0]
+    # except:
+    #   print(f'Good game! {self.playerID} resigned!')
+    #   return states[np.random.choice(range(len(states)),1)[0]]
+    idx = np.argmax(stateScores)
     return favStates[idx]
 
-  def botAI(self, option=0):
-    state = (self.vals['l'], self.vals['r'],
-    self.opponent.vals['l'],self.opponent.vals['r'])
+  def oneStepAhead(self, states, dumb=False):
+    favStates = []
+    stateScores = []
+    for s in states:
+      states2 = self.nextStates(s) ## states that s leads to...
+      stateScore = 0
+      for s2 in states2:
+        if s2[2]== s2[3]==0: ## state 2 and 3 are for opponent's left and right hand
+          stateScore += 1
+        elif s2[0]==s2[1]==0: ## state 0 and 1 are for this bot' left and right hand
+          stateScore -= 1
+      stateScores.append(stateScore)
+    if dumb:
+      idx = np.argmin(stateScores)
+    else:
+      idx = np.argmax(stateScores)
+    return favStates[idx]
+
+  def botAI(self, state):
     nStates = self.nextStates(state)
-    if option==0: ## randomly select a state
+    if self.botType==0: ## randomly select a state
       idx = np.random.choice(range(len(nStates)),1)[0]
       out = nStates[idx]
-    elif option==1: ## look one step ahead
+    elif self.botType==1: ## look one step ahead
       out = self.oneStepAhead(nStates)
     return out
 
@@ -61,7 +86,9 @@ class StickBot:
     self.opponent = opponent
 
   def play(self):
-    state = self.botAI(1)
+    state = (self.vals['l'], self.vals['r'],
+    self.opponent.vals['l'],self.opponent.vals['r'])
+    state = self.botAI(state)
     print(self.playerID, ' moved')
     self.vals['l'], self.vals['r'] = state[0],state[1]
     self.opponent.vals['l'],self.opponent.vals['r'] = state[2],state[3] 

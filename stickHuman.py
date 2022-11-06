@@ -1,7 +1,8 @@
 import numpy as np
 class StickPlayer:
   def __init__(self, id=0) -> None:
-    self.playerID = id
+    self.playerID = id ## player's name
+    self.playerGameID = None  ## player's inGame id
     self.opponent = None
     self.vals = {'l':1,'r':1}
     self.validActions = {

@@ -3,22 +3,31 @@ from enum import Enum
 from stickbot import StickBot
 from stickHuman import StickPlayer
 import datetime
+import pdb
 class StickGameType(Enum):
   HumanVsHuman = 1
   HumanVsBot = 2
   BotVsBot = 3
 
 class StickGameBoard:
-  def __init__(self, gameType) -> None: 
-    if gameType == StickGameType.HumanVsHuman:
-      self.players = [StickPlayer(1), StickPlayer(2)]
-    elif gameType == StickGameType.HumanVsBot:
-      self.players = [StickPlayer(1), StickBot()]
-    elif gameType == StickGameType.BotVsBot:
-      self.players = [StickBot(botName='Nobody'), StickBot(botName='Owen')]
+  def __init__(self, gameType = StickGameType.HumanVsHuman) -> None: 
+    if gameType==None:
+      gameType = int(input('Choose a game type:1. Human vs Human;2. Human vs Bot. 3. Bot vs Bot:'))
 
+    if gameType == StickGameType.HumanVsHuman.value:
+      self.players = [StickPlayer(1), StickPlayer(2)]
+    elif gameType == StickGameType.HumanVsBot.value:
+      self.players = [StickPlayer(1), StickBot()]
+    elif gameType == StickGameType.BotVsBot.value:
+      self.players = [StickBot(botName='Nobody'), StickBot(botName='Owen')]
+    
+    ## add opponent's reference
     self.players[0].addOpponent(self.players[1])
     self.players[1].addOpponent(self.players[0])
+    ## get PlayerGameID (0 or 1) for check score and other status
+    self.players[0].playerGameID = 0
+    self.players[1].playerGameID = 1
+
     self.turnNum = 0
     self.status = 1
     if gameType != StickGameType.BotVsBot:
@@ -63,10 +72,11 @@ class StickGameBoard:
       p.vals['r'], p.vals['l'] = 1, 1
     self.turnNum = 0
     self.status = 1
+    self.randomSeed = np.random.seed(datetime.datetime.now().microsecond)
 
 if __name__=='__main__':
   from Stick import  StickGameBoard
-  game = StickGameBoard()
+  game = StickGameBoard(gameType)
   while game.status !=-1: ## game end if status is -1
       game.NextMove()
       game.printBoard()

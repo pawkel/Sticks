@@ -39,7 +39,11 @@ class StickBot:
           break ## if this state leads to a lost, remove it
       if flag==1:
         favStates.append(s)
-    idx = np.random.choice(range(len(favStates)),1)[0]
+    try:
+      idx = np.random.choice(range(len(favStates)),1)[0]
+    except:
+      print(f'Good game! {self.playerID} resigned!')
+      return states[np.random.choice(range(len(states)),1)[0]]
     return favStates[idx]
 
   def botAI(self, option=0):
@@ -61,5 +65,3 @@ class StickBot:
     print(self.playerID, ' moved')
     self.vals['l'], self.vals['r'] = state[0],state[1]
     self.opponent.vals['l'],self.opponent.vals['r'] = state[2],state[3] 
-
-

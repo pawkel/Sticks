@@ -1,7 +1,7 @@
 from Stick import  StickGameBoard
 from Stick import StickGameType
 
-game = StickGameBoard(StickGameType.HumanVsBot)
+game = StickGameBoard(StickGameType.BotVsBot)
 while game.status !=-1: ## game end if status is -1
     game.NextMove()
     game.printBoard()

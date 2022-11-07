@@ -1,2 +1,6 @@
 __pycache__
 .DS_Store
+neat-python
+othello-feedforward_simpler.py
+reinforcement-learning-an-introduction
+tic_tac_toe.py

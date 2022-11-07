@@ -25,8 +25,8 @@ class StickGameBoard:
     self.players[0].addOpponent(self.players[1])
     self.players[1].addOpponent(self.players[0])
     ## get PlayerGameID (0 or 1) for check score and other status
-    self.players[0].playerGameID = 0
-    self.players[1].playerGameID = 1
+    self.players[0].playerGameID = 1
+    self.players[1].playerGameID = -1
 
     self.turnNum = 0
     self.status = 1
